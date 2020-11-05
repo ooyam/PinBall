@@ -11,6 +11,9 @@ public class FripperController : MonoBehaviour
     //弾いた時の傾き
     private float flickAngle = -20;
 
+    int leftid = -1;
+    int rightid = -2;
+
     // Use this for initialization
     void Start()
     {
@@ -44,6 +47,39 @@ public class FripperController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.RightArrow) && tag == "RightFripperTag")
         {
             SetAngle(this.defaultAngle);
+        }
+
+        if (Input.touchCount > 0)
+        {
+            // タッチ情報の取得
+            foreach (Touch touch in Input.touches)
+            {
+                //画面左側をタップしたとき
+                if (touch.phase == TouchPhase.Began && Input.mousePosition.x <= Screen.width / 2.0 && tag == "LeftFripperTag" && leftid == -1)
+                {
+                    SetAngle(this.flickAngle);
+                    leftid = touch.fingerId;
+                }
+                //画面右側をタップしたとき
+                if (touch.phase == TouchPhase.Began && Input.mousePosition.x >= Screen.width / 2.0 && tag == "RightFripperTag" && rightid == -2)
+                {
+                    SetAngle(this.flickAngle);
+                    rightid = touch.fingerId;
+                }
+
+                //タップが離された時左フリッパーを元に戻す
+                if (touch.phase == TouchPhase.Ended && leftid == touch.fingerId && tag == "LeftFripperTag")
+                {
+                    SetAngle(this.defaultAngle);
+                    leftid = -1;
+                }
+                //タップが離された時右フリッパーを元に戻す
+                if (touch.phase == TouchPhase.Ended && rightid == touch.fingerId && tag == "RightFripperTag")
+                {
+                    SetAngle(this.defaultAngle);
+                    rightid = -2;
+                }
+            }
         }
     }
 
